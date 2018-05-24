@@ -112,7 +112,7 @@ def train():
 
             qval = model.predict(distances.reshape(1, 5), batch_size=1)  # valori senza la prossima mossa
           
-            if random.random() < epsilon:  # uso un valore casuale come mossase tale valore è minore di epsilon
+            if random.random() < epsilon:  # uso un valore casuale come mossa se tale valore è minore di epsilon
                 action = np.random.randint(0, 3)
             else:
                 action = np.argmax(qval)
