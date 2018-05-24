@@ -7,18 +7,20 @@ from keras.models import load_model
 import random
 import time,sys,pygame
 
+input_sh = 5
 M =720
 #storicoPos = []
 #nPos = 5
 startX = 3
 startY = 3
-numOst = 60
+numOst = 50
+epochs = 1000
 N = M / 40  # dimensione matrice
 gamma = 0.9
 point = 10
 penalty = -100
 model = Sequential()
-model.add(Dense(3, init="lecun_uniform", input_shape=(3,)))
+model.add(Dense(input_sh, init="lecun_uniform", input_shape=(input_sh,)))
 model.add(Activation('relu'))
 model.add(Dense(160, init="lecun_uniform"))
 model.add(Activation('relu'))
@@ -76,7 +78,7 @@ def testAlgo():
     done = False
     while not done and g.dead == 0:
         distances = calcolateDistances(g, obstacles)
-        qval = model.predict(distances.reshape(1, 3), batch_size=1)
+        qval = model.predict(distances.reshape(1, input_sh), batch_size=1)
         action = np.argmax(qval)
         print(action)
         g.move_gir(action)
@@ -106,7 +108,7 @@ def testAlgo():
 
 
 def train():
-    epochs = 1000
+
     epsilon = 1
     total_deaths = 0
     for i in range(epochs):
@@ -115,10 +117,10 @@ def train():
         j = 0
         while status != 1 and j < 20:  # check if dead or all vehicles are dead
 
-            distances = np.zeros(3)
+            distances = np.zeros(input_sh)
             distances = calcolateDistances(g, obstacles)
 
-            qval = model.predict(distances.reshape(1, 3), batch_size=1)  # valori senza la prossima mossa
+            qval = model.predict(distances.reshape(1, input_sh), batch_size=1)  # valori senza la prossima mossa
           
             if random.random() < epsilon:  # uso un valore casuale come mossa se tale valore è minore di epsilon
                 action = np.random.randint(0, 3)
@@ -131,7 +133,7 @@ def train():
 
             reward = getReward(g, obstacles, action)  # controllo se ha colpito un ostacolo
 
-            newQ = model.predict(newDistances.reshape(1, 3), batch_size=1)  # valori con la prossima mossa
+            newQ = model.predict(newDistances.reshape(1, input_sh), batch_size=1)  # valori con la prossima mossa
 
             maxQ = np.max(newQ)
 
@@ -146,7 +148,7 @@ def train():
 
             y[0][action] = update
 
-            model.fit(distances.reshape(1, 3), y, batch_size=1, nb_epoch=1, verbose=0)
+            model.fit(distances.reshape(1, input_sh), y, batch_size=1, nb_epoch=1, verbose=0)
 
             j += 1
 
@@ -160,10 +162,10 @@ def train():
     model.save('my_model.h5')
 
 def calcolateDistances(g, obstacles):
-    distances = np.zeros(3)
-    j = -1
+    distances = np.zeros(input_sh)
+    j = -2
     gir_prov = gr.Vehicle((0, 0))
-    while j <= 1:
+    while j <= 2:
         action = g.old_action + j
         if action > 0:
             action = action % 8
@@ -175,10 +177,10 @@ def calcolateDistances(g, obstacles):
         for i in range(6):
             gir_prov.update_pos(action)
             if checkCollision(gir_prov, obstacles):
-                distances[j+1] = i + 1
+                distances[j + 2] = i + 1
                 break
         if i == 5:
-            distances[j + 1] = 6
+            distances[j + 2] = 6
         j += 1
     
     return distances
@@ -216,7 +218,7 @@ def getReward(g, obstacles, action):
         gain = penalty
     else:
         if (action == 0):
-            gain += 2
+            gain += 3
 
         gain += point
     return gain
