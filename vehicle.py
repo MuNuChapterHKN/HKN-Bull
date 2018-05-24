@@ -5,7 +5,7 @@ class Vehicle:
     pos_old=(0,0)
     dir=(0,0)
     dead=0
-    old_action=0
+    old_action=3
     actions=list()
 
     def __init__(self,pos_iniz):

@@ -11,13 +11,13 @@ import time,sys,pygame
 #nPos = 5
 startX = 3
 startY = 3
-numOst = 30
-N = 15  # dimensione matrice
+numOst = 100
+N = 30  # dimensione matrice
 gamma = 0.9
 point = 10
 penalty = -100
 model = Sequential()
-model.add(Dense(5, init="lecun_uniform", input_shape=(5,)))
+model.add(Dense(3, init="lecun_uniform", input_shape=(3,)))
 model.add(Activation('relu'))
 model.add(Dense(160, init="lecun_uniform"))
 model.add(Activation('relu'))
@@ -33,10 +33,10 @@ model.compile(loss='mse', optimizer=rms)
 
 def initGame():
     #inizializzo il veicolo
-    g = gr.Vehicle((startX, startY)) # ho scelto questa posizione a caso
-    obstacles = list() #creo gli ostacoli in posizione random
+    g = gr.Vehicle((startX, startY))  # ho scelto questa posizione a caso
+    obstacles = list()  # creo gli ostacoli in posizione random
     for i in range(numOst):
-        poz=(random.randint(1,N - 1),random.randint(1, N - 1))
+        poz = (random.randint(1, N - 1), random.randint(1, N - 1))
         if poz != (startX, startY):
             obstacles.append(poz)
     i = 1
@@ -46,11 +46,13 @@ def initGame():
         poz1 = (i, 0)
         poz2 = (N - 1, i)
         poz3 = (i, N - 1)
+        #poz3 = (i, 6)
         obstacles.append(poz)
         obstacles.append(poz1)
         obstacles.append(poz2)
         obstacles.append(poz3)
         i += 1
+
     #inserisco gli angoli
     obstacles.append((0, 0))
     obstacles.append((N - 1, N - 1))
@@ -61,8 +63,9 @@ def initGame():
 
 def testAlgo():
     g, obstacles = initGame()
-    M = 600
+    M = 1200
     WHITE = (255, 255, 255)
+    GRAY = (200, 200, 200)
     RED = (255, 0, 0)
     BLACK = (0, 0, 0)
     pygame.init()
@@ -73,7 +76,7 @@ def testAlgo():
     done = False
     while not done and g.dead == 0:
         distances = calcolateDistances(g, obstacles)
-        qval = model.predict(distances.reshape(1, 5), batch_size=1)
+        qval = model.predict(distances.reshape(1, 3), batch_size=1)
         action = np.argmax(qval)
         print(action)
         g.move_gir(action)
@@ -89,16 +92,21 @@ def testAlgo():
             posizione = (40 * o[0], 40 * o[1], 40, 40)
             pygame.draw.rect(screen, RED, posizione) # obstacles
 
-        position=((g.pos[0]*40)+20,(g.pos[1]*40)+20)
-        pygame.draw.circle(screen,WHITE,position,10) # player
+        kMax = int(M / 40)
+        for i in range(kMax):
+            pygame.draw.line(screen, GRAY, (0, i*40), (M, i*40), 1)
+            pygame.draw.line(screen, GRAY, (i * 40, 0), (i * 40, M), 1)
+
+        position = ((g.pos[0]*40)+20, (g.pos[1] * 40) + 20)
+        pygame.draw.circle(screen, WHITE, position, 10)  # player
         pygame.display.flip()
-        time.sleep(0.2)
+        time.sleep(0.5)
     pygame.quit()
 
 
 
 def train():
-    epochs = 10000
+    epochs = 1000
     epsilon = 1
     total_deaths = 0
     for i in range(epochs):
@@ -107,10 +115,10 @@ def train():
         j = 0
         while status != 1 and j < 20:  # check if dead or all vehicles are dead
 
-            distances = np.zeros(5)
+            distances = np.zeros(3)
             distances = calcolateDistances(g, obstacles)
 
-            qval = model.predict(distances.reshape(1, 5), batch_size=1)  # valori senza la prossima mossa
+            qval = model.predict(distances.reshape(1, 3), batch_size=1)  # valori senza la prossima mossa
           
             if random.random() < epsilon:  # uso un valore casuale come mossa se tale valore è minore di epsilon
                 action = np.random.randint(0, 3)
@@ -123,7 +131,7 @@ def train():
 
             reward = getReward(g, obstacles, action)  # controllo se ha colpito un ostacolo
 
-            newQ = model.predict(newDistances.reshape(1, 5), batch_size=1)  # valori con la prossima mossa
+            newQ = model.predict(newDistances.reshape(1, 3), batch_size=1)  # valori con la prossima mossa
 
             maxQ = np.max(newQ)
 
@@ -138,12 +146,12 @@ def train():
 
             y[0][action] = update
 
-            model.fit(distances.reshape(1, 5), y, batch_size=1, nb_epoch=1, verbose=0)
+            model.fit(distances.reshape(1, 3), y, batch_size=1, nb_epoch=1, verbose=0)
 
             j += 1
 
         if epsilon > 0.1:
-            epsilon -= 1/epochs
+            epsilon -= 1/(epochs)
 
         if(i % 50) == 0:
             #print(str((i/epochs) * 100))
@@ -152,10 +160,10 @@ def train():
     model.save('my_model.h5')
 
 def calcolateDistances(g, obstacles):
-    distances = np.zeros(5)
-    j = -2
+    distances = np.zeros(3)
+    j = -1
     gir_prov = gr.Vehicle((0, 0))
-    while j <= 2:
+    while j <= 1:
         action = g.old_action + j
         if action > 0:
             action = action % 8
@@ -167,10 +175,10 @@ def calcolateDistances(g, obstacles):
         for i in range(6):
             gir_prov.update_pos(action)
             if checkCollision(gir_prov, obstacles):
-                distances[j+2] = i + 1
+                distances[j+1] = i + 1
                 break
         if i == 5:
-            distances[j + 2] = 6
+            distances[j + 1] = 6
         j += 1
     
     return distances
@@ -203,10 +211,14 @@ def getReward(g, obstacles, action):
     # if len(storicoPos) > nPos and (controllaRidondanza()):
     #     gain = -5
     # elif
+    gain = 0
     if checkCollision(g, obstacles):
         gain = penalty
     else:
-        gain = point
+        if (action == 0):
+            gain += 5
+
+        gain += point
     return gain
 
 def checkCollision(g, obstacles):
