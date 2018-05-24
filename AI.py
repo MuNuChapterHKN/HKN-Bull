@@ -7,12 +7,13 @@ from keras.models import load_model
 import random
 import time,sys,pygame
 
+M =720
 #storicoPos = []
 #nPos = 5
 startX = 3
 startY = 3
-numOst = 100
-N = 30  # dimensione matrice
+numOst = 60
+N = M / 40  # dimensione matrice
 gamma = 0.9
 point = 10
 penalty = -100
@@ -63,7 +64,6 @@ def initGame():
 
 def testAlgo():
     g, obstacles = initGame()
-    M = 1200
     WHITE = (255, 255, 255)
     GRAY = (200, 200, 200)
     RED = (255, 0, 0)
@@ -216,7 +216,7 @@ def getReward(g, obstacles, action):
         gain = penalty
     else:
         if (action == 0):
-            gain += 5
+            gain += 2
 
         gain += point
     return gain
