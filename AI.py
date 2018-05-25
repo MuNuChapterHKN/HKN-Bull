@@ -7,18 +7,21 @@ from keras.models import load_model
 import random
 import time,sys,pygame
 
-input_sh = 5
-M =720
+input_sh = 5  # numero di ingressi (sensori)
+matrix = 600  # pixel matrice
+dimCella = 20  # grandezza cella
 #storicoPos = []
 #nPos = 5
 startX = 3
 startY = 3
-numOst = 50
-epochs = 1000
-N = M / 40  # dimensione matrice
+numOst = 75  # numero ostacoli
+epochs = 1000  # numero di partite fatte per allenarsi
+N = int(matrix / dimCella)  # dimensione matrice (numero celle)
 gamma = 0.9
-point = 10
-penalty = -100
+point = 10  # punteggio base come premio
+penalty = -100  # penalizzazione morte
+
+#  Definizione modello
 model = Sequential()
 model.add(Dense(input_sh, init="lecun_uniform", input_shape=(input_sh,)))
 model.add(Activation('relu'))
@@ -33,18 +36,18 @@ rms = RMSprop()
 model.compile(loss='mse', optimizer=rms)
 
 
-
 def initGame():
     #inizializzo il veicolo
-    g = gr.Vehicle((startX, startY))  # ho scelto questa posizione a caso
+    g = gr.Vehicle((startX, startY))  # inizializzo con la posizione prestabilita
     obstacles = list()  # creo gli ostacoli in posizione random
     for i in range(numOst):
         poz = (random.randint(1, N - 1), random.randint(1, N - 1))
         if poz != (startX, startY):
             obstacles.append(poz)
+
+    # inserisco i bordi
     i = 1
-    #inserisco i bordi
-    while(i <= N - 2):
+    while i <= N - 2:
         poz = (0, i)
         poz1 = (i, 0)
         poz2 = (N - 1, i)
@@ -56,7 +59,7 @@ def initGame():
         obstacles.append(poz3)
         i += 1
 
-    #inserisco gli angoli
+    # inserisco gli angoli
     obstacles.append((0, 0))
     obstacles.append((N - 1, N - 1))
     obstacles.append((0, N - 1))
@@ -64,6 +67,7 @@ def initGame():
     return g, obstacles
 
 
+# viaulizzazione grafica dell'algoritmo
 def testAlgo():
     g, obstacles = initGame()
     WHITE = (255, 255, 255)
@@ -71,18 +75,17 @@ def testAlgo():
     RED = (255, 0, 0)
     BLACK = (0, 0, 0)
     pygame.init()
-    size = (M, M)
+    size = (matrix, matrix)
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("Simulation")
-    #clock = pygame.time.Clock()
     done = False
     while not done and g.dead == 0:
-        distances = calcolateDistances(g, obstacles)
-        qval = model.predict(distances.reshape(1, input_sh), batch_size=1)
-        action = np.argmax(qval)
+        distances = calcolateDistances(g, obstacles)  # calcola le distanze
+        qval = model.predict(distances.reshape(1, input_sh), batch_size=1)  # utilizza le distanze per calcolare la prossima mossa
+        action = np.argmax(qval)  # seleziona la mossa migliore
         print(action)
         g.move_gir(action)
-        checkCollision(g,obstacles)
+        checkCollision(g, obstacles)
 
         # la grafica
         for event in pygame.event.get():  # User did something
@@ -91,16 +94,17 @@ def testAlgo():
         screen.fill(BLACK)
         # riparti da capo ogni volta
         for o in obstacles:
-            posizione = (40 * o[0], 40 * o[1], 40, 40)
-            pygame.draw.rect(screen, RED, posizione) # obstacles
+            posizione = (dimCella * o[0], dimCella * o[1], dimCella, dimCella)
+            pygame.draw.rect(screen, RED, posizione)  #  draw obstacles
 
-        kMax = int(M / 40)
+        # disegna griglia
+        kMax = int(matrix / dimCella)
         for i in range(kMax):
-            pygame.draw.line(screen, GRAY, (0, i*40), (M, i*40), 1)
-            pygame.draw.line(screen, GRAY, (i * 40, 0), (i * 40, M), 1)
+            pygame.draw.line(screen, GRAY, (0, i * dimCella), (matrix, i * dimCella), 1)
+            pygame.draw.line(screen, GRAY, (i * dimCella, 0), (i * dimCella, matrix), 1)
 
-        position = ((g.pos[0]*40)+20, (g.pos[1] * 40) + 20)
-        pygame.draw.circle(screen, WHITE, position, 10)  # player
+        position = ((g.pos[0] * dimCella) + int(dimCella / 2), (g.pos[1] * dimCella) + int(dimCella / 2))
+        pygame.draw.circle(screen, WHITE, position, int(dimCella / 4))  # player
         pygame.display.flip()
         time.sleep(0.5)
     pygame.quit()
@@ -156,8 +160,7 @@ def train():
             epsilon -= 1/(epochs)
 
         if(i % 50) == 0:
-            #print(str((i/epochs) * 100))
-            print("{0:.2f}".format((i/epochs) * 100))
+            print("{0:.2f}".format((i/epochs) * 100) + "%")
     print("Total deaths: " + str(total_deaths) + "\nPercentuale : " + "{0:.2f}".format((total_deaths / epochs * 100)) + "%")
     model.save('my_model.h5')
 
@@ -222,6 +225,7 @@ def getReward(g, obstacles, action):
 
         gain += point
     return gain
+
 
 def checkCollision(g, obstacles):
     for o in obstacles:
