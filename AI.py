@@ -83,8 +83,9 @@ def testAlgo():
         distances = calcolateDistances(g, obstacles)  # calcola le distanze
         qval = model.predict(distances.reshape(1, input_sh), batch_size=1)  # utilizza le distanze per calcolare la prossima mossa
         action = np.argmax(qval)  # seleziona la mossa migliore
-        print(action)
+        #print(action)
         g.move_gir(action)
+        g.move_vehicle(action)
         checkCollision(g, obstacles)
 
         # la grafica
@@ -106,7 +107,7 @@ def testAlgo():
         position = ((g.pos[0] * dimCella) + int(dimCella / 2), (g.pos[1] * dimCella) + int(dimCella / 2))
         pygame.draw.circle(screen, WHITE, position, int(dimCella / 4))  # player
         pygame.display.flip()
-        time.sleep(0.5)
+        time.sleep(5)
     pygame.quit()
 
 
@@ -187,25 +188,6 @@ def calcolateDistances(g, obstacles):
         j += 1
     
     return distances
-
-# def controllaContenuto(arrayPiccolo, dim):
-#     ripetizioni = 0
-#     for i in range (len(storicoPos) - 2 * dim + 1):
-#         if arrayPiccolo == storicoPos[i:i + dim - 1]:
-#             ripetizioni += 1
-#     return ripetizioni
-
-
-# def controllaRidondanza():
-#     i = 3
-#     ripetizioni = 0
-#     last = len(storicoPos) - 1
-#     while i < nPos:
-#         sottoVettore = storicoPos[(last - i): last]
-#         ripetizioni = controllaContenuto(sottoVettore,i)
-#         if ripetizioni > 2:
-#             return True
-#     return False
 
 def getReward(g, obstacles, action):
     #pos = g.pos
