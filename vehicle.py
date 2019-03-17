@@ -1,5 +1,5 @@
 import numpy as np
-
+import threading
 
 class Vehicle:
     pos = (0, 0)
@@ -33,17 +33,42 @@ class Vehicle:
         if move == 0:
             new_action = self.old_action  # Dritto
         elif move == 1:
-            new_action = (self.old_action+1)%8  # Destra
+            new_action = (self.old_action+1)%8  # Sinistra
         elif move == 2:
             if self.old_action == 0:
-                new_action = 7  # Sinistra
+                new_action = 7  # Destra
             else:
                 new_action = self.old_action-1
         self.update_pos(new_action)
 
+    def move_vehicle(self,move):
+        new_action_right = 0
+        new_action_left = 0
+        if move == 0: # Dritto
+            new_action_left = 1
+            new_action_right = 1
+        elif move == 2: #Destra
+            new_action_left = 1
+            new_action_right = 0.5
+        elif move == 1: #Sinistra
+            new_action_left = 0.5
+            new_action_right = 1
+        # Thread per gestire contemporaneamente motore destro e sinistro
+        try:
+            t1 = threading.Thread(target=right_motor, args = [new_action_right])
+            t1.daemon = True # se il processo chiamante finisce muore anche il thread
+            t2 = threading.Thread(target=left_motor, args = [new_action_left])
+            t2.daemon = True
+            t1.start()
+            t2.start()
+        except:
+            print ("Error: unable to start thread")
 
-
-
+# Funzioni per testare i threads
+def right_motor(r):
+    print("Destra: ", r)
+def left_motor(l):
+    print("Sinistra: ", l)
 
 
 
