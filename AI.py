@@ -185,7 +185,7 @@ def calcolateDistances(g, obstacles):
         if i == 5:
             distances[j + 2] = 6
         j += 1
-    
+    print(distances)
     return distances
 
 # def controllaContenuto(arrayPiccolo, dim):
