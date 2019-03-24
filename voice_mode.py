@@ -1,10 +1,21 @@
+import RPi.GPIO as GPIO 
 import threading
-import socket
+import socket     
 import sys
 
 # Duty cycle for right and left motor
 right_dc = 0
 left_dc = 0
+
+GPIO.setmode(GPIO.BOARD)  # Set Raspberry to use pin number when referencing GPIO pin
+
+# Left motor
+GPIO.setup(12, GPIO.OUT)  # Set GPIO pin 12 to output mode.
+pwmLeft = GPIO.PWM(12, 100)   # Initialize PWM on pwmPin 100Hz frequency
+
+# Right motor
+GPIO.setup(13, GPIO.OUT)  # Set GPIO pin 12 to output mode.
+pwmRight = GPIO.PWM(13, 100)   # Initialize PWM on pwmPin 100Hz frequency
 
 # Thread who acts as a server and listen for TCP connections
 def server():
@@ -74,19 +85,35 @@ def server():
 
 # Thread for left motor
 def left_motor():
+    pwmLeft.start(left_dc)
     old_dc = left_dc
-    while True:
-        if old_dc != left_dc:
-            print("Left: " + str(left_dc))
-            old_dc = left_dc
+    try:
+        while True:
+            if old_dc != left_dc:
+                pwmLeft.ChanceDutyCycle(left_dc)
+                print("Left: " + str(left_dc))
+                old_dc = left_dc
+    except KeyboardInterrupt:
+        print("Ctl C pressed - stopping left motor")
+
+    # stop PWM
+    pwmLeft.stop()                         
 
 # Thread for right motor
 def right_motor():
+    pwmRight.start(right_dc)
     old_dc = right_dc
-    while True:
-        if old_dc != right_dc:
-            print("Right: " + str(right_dc))      
-            old_dc = right_dc
+    try:
+        while True:
+            if old_dc != right_dc:
+                pwmRight.ChangeDutyCycle(right_dc)
+                print("Right: " + str(right_dc))  
+                old_dc = right_dc   
+    except KeyboardInterrupt:
+        print("Ctl-C pressed - stopping right motor")
+
+    # stop PWM
+    pwmRight.stop()                         
 
 # Create threads
 if __name__ == '__main__':
@@ -105,5 +132,11 @@ if __name__ == '__main__':
         print ("Error: unable to start thread")
 
     # Infinite main loop
-    while True:
-        pass
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        print("Ctl-C pressed - ending program")
+
+    # resets GPIO ports used back to input mode
+    GPIO.cleanup()                     
