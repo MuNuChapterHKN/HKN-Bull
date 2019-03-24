@@ -36,7 +36,7 @@ def main():
                 elif text == 'robot sinistra':
                     s.send('3'.encode())
                     data = s.recv(1024).decode()
-                elif text == 'robot fermo':
+                elif text == 'robot stop':
                     s.send('-1'.encode())
                     data = s.recv(1024).decode()
                 print(data)
