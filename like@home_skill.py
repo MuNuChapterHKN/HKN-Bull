@@ -25,10 +25,10 @@ def main():
             if text:
                 print("You said : " + text)
                 if text == "qual e l'evento migliore del mondo?":
-                    text = """Like at Home è l'evento che ti farà sentire a casa. All'evento i partecipanti diceveranno dei Voice Kit (proprio come me!)
-                             e dovranno sviluppare nuove skill che rendano Google Assistant il miglior coinquilino che ci sia. Lo scopo è far sentire a casa anche gli studenti fuorisede.
+                    text = """Laic et om è l'evento che ti farà sentire a casa! All'evento i partecipanti riceveranno dei Vois chit (proprio come me!)
+                             e dovranno sviluppare nuove schill che rendano Google Assistant il miglior coinquilino che ci sia. Lo scopo è far sentire a casa anche gli studenti fuorisede.
                             L'evento si terrà sabato 30 marzo e domenica 31. Nel costo del biglietto sono inclusi l'ingresso e parecchi gadget. Il pranzo, la merenda, la cena, la colazione,
-                            caffè e redbull sono gratuiti per tutti i partecipanti.
+                            caffe e redbull sono gratuiti per tutti i partecipanti.
                             Cosa aspettate? Sentitevi Like at Home!"""
                     aiy.audio.say(text)
                 else:
