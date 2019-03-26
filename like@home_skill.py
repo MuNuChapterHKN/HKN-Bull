@@ -23,7 +23,8 @@ def main():
             print('Listening...')
             text, audio = assistant.recognize()
             if text:
-                if text == "ok google qual'è l'evento migliore del mondo?":
+                print("You said : " + text)
+                if text == "qual e l'evento migliore del mondo?":
                     text = """Like at Home è l'evento che ti farà sentire a casa. All'evento i partecipanti diceveranno dei Voice Kit (proprio come me!)
                              e dovranno sviluppare nuove skill che rendano Google Assistant il miglior coinquilino che ci sia. Lo scopo è far sentire a casa anche gli studenti fuorisede.
                             L'evento si terrà sabato 30 marzo e domenica 31. Nel costo del biglietto sono inclusi l'ingresso e parecchi gadget. Il pranzo, la merenda, la cena, la colazione,
@@ -31,7 +32,7 @@ def main():
                             Cosa aspettate? Sentitevi Like at Home!"""
                     aiy.audio.say(text)
                 else:
-                    text = "ok google qual'è l'evento migliore del mondo?"
+                    text = "ok google qual e l'evento migliore del mondo?"
                     aiy.audio.say(text)
 
 if __name__ == "__main__":
