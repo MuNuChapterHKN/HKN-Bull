@@ -22,12 +22,13 @@ def main():
             status_ui.status('listening')
             print('Listening...')
             text, audio = assistant.recognize()
-            if text == "prova":
-                text = "Prova"
-                aiy.audio.say("prova")
-            else:
-                text = "non ho capito, ripeti ciò che hai detto"
-                aiy.audio.say(text)
+            if text:
+                if text == "prova":
+                    text = "Prova"
+                    aiy.audio.say("prova")
+                else:
+                    text = "non ho capito, ripeti ciò che hai detto"
+                    aiy.audio.say(text)
 
 if __name__ == "__main__":
     main()
