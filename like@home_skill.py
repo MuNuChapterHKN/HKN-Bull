@@ -24,10 +24,14 @@ def main():
             text, audio = assistant.recognize()
             if text:
                 if text == "ok google qual'è l'evento migliore del mondo?":
-                    text = "Ti piace programmare? Hai sempre nuove idee ma nessuna opportunità per realizzarle? Giunge anche quest'anno l'occasione per farti valere! Partecipa a Laic et om! La sfida consiste nell’ideare e sviluppare nuove schills per un om Assistant; atte ad assistere gli studenti fuorisede nella loro vita casalinga."
+                    text = """Like at Home è l'evento che ti farà sentire a casa. All'evento i partecipanti diceveranno dei Voice Kit (proprio come me!)
+                             e dovranno sviluppare nuove skill che rendano Google Assistant il miglior coinquilino che ci sia. Lo scopo è far sentire a casa anche gli studenti fuorisede.
+                            L'evento si terrà sabato 30 marzo e domenica 31. Nel costo del biglietto sono inclusi l'ingresso e parecchi gadget. Il pranzo, la merenda, la cena, la colazione,
+                            caffè e redbull sono gratuiti per tutti i partecipanti.
+                            Cosa aspettate? Sentitevi Like at Home!"""
                     aiy.audio.say(text)
                 else:
-                    text = "parlami di laic et om"
+                    text = "ok google qual'è l'evento migliore del mondo?"
                     aiy.audio.say(text)
 
 if __name__ == "__main__":
