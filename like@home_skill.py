@@ -25,6 +25,9 @@ def main():
             if audio == "ok google parlami di like at home":
                 text = "Prova"
                 aiy.voice.tts.say(text, lang='it-IT', volume=60, pitch=130, speed=100, device='default')
-            else
+            else:
                 text = "non ho capito, ripeti ciò che hai detto"
                 aiy.voice.tts.say(text, lang='it-IT', volume=60, pitch=130, speed=100, device='default')
+
+if __name__ == "__main__":
+    main()
