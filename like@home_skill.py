@@ -5,6 +5,7 @@ Like@Home organized by the Mu Nu Chapter of IEEE-Eta Kappa Nu
 import aiy.assistant.grpc
 import aiy.audio
 import aiy.voicehat
+import aiy.voice.tts
 import sys
 
 aiy.i18n.set_language_code('it-IT')
