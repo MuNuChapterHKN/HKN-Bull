@@ -5,7 +5,6 @@ Like@Home organized by the Mu Nu Chapter of IEEE-Eta Kappa Nu
 import aiy.assistant.grpc
 import aiy.audio
 import aiy.voicehat
-import aiy.voice.tts
 import sys
 
 aiy.i18n.set_language_code('it-IT')
@@ -23,12 +22,12 @@ def main():
             status_ui.status('listening')
             print('Listening...')
             text, audio = assistant.recognize()
-            if audio == "ok google parlami di like at home":
+            if text == "prova":
                 text = "Prova"
-                aiy.voice.tts.say(text, lang='it-IT', volume=60, pitch=130, speed=100, device='default')
+                aiy.audio.say("prova")
             else:
                 text = "non ho capito, ripeti ciò che hai detto"
-                aiy.voice.tts.say(text, lang='it-IT', volume=60, pitch=130, speed=100, device='default')
+                aiy.audio.say(text)
 
 if __name__ == "__main__":
     main()
