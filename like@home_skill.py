@@ -23,11 +23,11 @@ def main():
             print('Listening...')
             text, audio = assistant.recognize()
             if text:
-                if text == "prova":
-                    text = "Prova"
-                    aiy.audio.say("prova")
+                if text == "ok google qual'è l'evento migliore del mondo?":
+                    text = "Ti piace programmare? Hai sempre nuove idee ma nessuna opportunità per realizzarle? Giunge anche quest'anno l'occasione per farti valere! Partecipa a Laic et om! La sfida consiste nell’ideare e sviluppare nuove schills per un om Assistant; atte ad assistere gli studenti fuorisede nella loro vita casalinga."
+                    aiy.audio.say(text)
                 else:
-                    text = "non ho capito, ripeti ciò che hai detto"
+                    text = "parlami di laic et om"
                     aiy.audio.say(text)
 
 if __name__ == "__main__":

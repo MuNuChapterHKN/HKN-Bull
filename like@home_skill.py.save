@@ -1,0 +1,53 @@
+"""
+This skills provides a quick description about the event 
+Like@Home organized by the Mu Nu Chapter of IEEE-Eta Kappa Nu
+"""
+import aiy.assistant.grpc
+import aiy.audio
+import aiy.voicehat
+import sys
+
+aiy.i18n.set_language_code('it-IT')
+
+def main():
+    status_ui = aiy.voicehat.get_status_ui()
+    status_ui.status('starting')
+    assistant = aiy.assistant.grpc.get_assistant()
+    button = aiy.voicehat.get_button()
+    with aiy.audio.get_recorder():
+        while True:
+            status_ui.status('ready')
+            print('Press button to send commands to the robot')
+            button.wait_for_press()
+            status_ui.status('listening')
+            print('Listening...')
+            text, audio = assistant.recognize()
+            if text:
+                if text == "ok google parlami di like et om":
+                    text = "Prova"
+                    aiy.audio.say("prova")
+                else:
+                    text = "non ho capito, ripeti ciò che hai detto"
+                    aiy.audio.say(text)
+
+if __name__ == "__main__":
+    main()
+🤓 Ti piace programmare?
+Hai sempre nuove idee ma nessun’oppurtunità per concretizzarle? Giunge anche quest’anno l’occasione per farti valere!
+
+🏡 Il nome dell’hackathon di quest’anno è Like@Home.
+La sfida consiste nell’ideare e sviluppare nuove skills per un Home Assistant atte ad assistere gli studenti fuorisede nella loro vita casalinga.
+
+📅 L’evento si terrà il 30 e il 31 Marzo e avrà una durata prevista di circa 30 ore, di cui 24 dedicate interamente allo sviluppo. Ci troveremo alle 8:30 del 30 Marzo al Toolbox Coworking, Via Agostino da Montefeltro 2 (https://maps.app.goo.gl/kSvN8).
+In queste ore i partecipanti dovranno sviluppare le loro idee e preparare una presentazione per il loro progetto.
+
+🤖 Ai partecipanti verranno forniti esclusivi kit di speech processing e recognition (https://bit.ly/2pOLEXY) al fine di semplificare l’interazione con il rinomato Google Assistant. Al termine dell’evento i progetti verranno esposti e una giuria sarà incaricata di stabilire i vincitori ai quali, infine, verrà assegnato un premio. Non sono richieste particolari skill per poter partecipare, un minimo di conoscenze di programmazione base e la voglia di mettersi in gioco saranno più che sufficienti ad arrivare fino in fondo alla competizione! 🤓 Ti piace programmare?
+Hai sempre nuove idee ma nessun’oppurtunità per concretizzarle? Giunge anche quest’anno l’occasione per farti valere!
+
+🏡 Il nome dell’hackathon di quest’anno è Like@Home.
+La sfida consiste nell’ideare e sviluppare nuove skills per un Home Assistant atte ad assistere gli studenti fuorisede nella loro vita casalinga.
+
+📅 L’evento si terrà il 30 e il 31 Marzo e avrà una durata prevista di circa 30 ore, di cui 24 dedicate interamente allo sviluppo. Ci troveremo alle 8:30 del 30 Marzo al Toolbox Coworking, Via Agostino da Montefeltro 2 (https://maps.app.goo.gl/kSvN8).
+In queste ore i partecipanti dovranno sviluppare le loro idee e preparare una presentazione per il loro progetto.
+
+🤖 Ai partecipanti verranno forniti esclusivi kit di speech processing e recognition (https://bit.ly/2pOLEXY) al fine di semplificare l’interazione con il rinomato Google Assistant. Al termine dell’evento i progetti verranno esposti e una giuria sarà incaricata di stabilire i vincitori ai quali, infine, verrà assegnato un premio. Non sono richieste particolari skill per poter partecipare, un minimo di conoscenze di programmazione base e la voglia di mettersi in gioco saranno più che sufficienti ad arrivare fino in fondo alla competizione! 
