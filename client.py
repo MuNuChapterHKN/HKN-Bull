@@ -28,6 +28,7 @@ def main():
             if text:
                 s = socket(AF_INET, SOCK_STREAM)    # create a TCP socket
                 s.connect((myHost, myPort)) # connect to server on the port
+                print("You said: " + text)
                 if text == 'robot dritto':
                     s.send('1'.encode())
                     data = s.recv(1024).decode()
