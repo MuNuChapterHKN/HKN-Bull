@@ -45,7 +45,7 @@ while(True):
     distance1 = measure(TRIG1, ECHO1)
     distance2 = measure(TRIG2, ECHO2)
     distance3 = measure(TRIG3, ECHO3)
-    print("[Distance] 1--> " +  str(distance1) + "cm\t2--> " + str(distance2) + "cm\t3--> "+ "cm") 
+    print("[Distance] 1--> " +  str(distance1) + "cm\t2--> " + str(distance2) + "cm\t3--> "+ str(distance3) + "cm") 
     sleep(1)
 
 GPIO.cleanup()
