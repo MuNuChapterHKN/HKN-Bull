@@ -7,7 +7,7 @@ from keras.models import load_model
 import random
 import time,sys,pygame
 
-input_sh = 5  # numero di ingressi (sensori)
+input_sh = 3  # numero di ingressi (sensori)
 matrix = 600  # pixel matrice
 dimCella = 20  # grandezza cella
 #storicoPos = []
@@ -15,7 +15,7 @@ dimCella = 20  # grandezza cella
 startX = 3
 startY = 3
 numOst = 75  # numero ostacoli
-epochs = 100  # numero di partite fatte per allenarsi
+epochs = 10000  # numero di partite fatte per allenarsi
 N = int(matrix / dimCella)  # dimensione matrice (numero celle)
 gamma = 0.9
 point = 10  # punteggio base come premio
@@ -107,7 +107,7 @@ def testAlgo():
         position = ((g.pos[0] * dimCella) + int(dimCella / 2), (g.pos[1] * dimCella) + int(dimCella / 2))
         pygame.draw.circle(screen, WHITE, position, int(dimCella / 4))  # player
         pygame.display.flip()
-        time.sleep(5)
+        time.sleep(.1)
     pygame.quit()
 
 
@@ -167,9 +167,15 @@ def train():
 
 def calcolateDistances(g, obstacles):
     distances = np.zeros(input_sh)
-    j = -2
+
+    # la variabile di offset serve perchè i sensori DEVONO sempre essere in numero dispari, ordinati 
+    # da sinistra a destra (o il contrario, questo dipende da come è implementato il veicolo)
+    # il vettore ha come primo elemento la distanza del sensore di sinistra e come ultimo elemento la
+    # la distanza del sensore di destra (o viceversa)
+    offset = int(input_sh / 2)
+    j = -offset # -1 = -int(input_sh / 2)
     gir_prov = gr.Vehicle((0, 0))
-    while j <= 2:
+    while j <= offset:# 1 = int(input_sh / 2)
         action = g.old_action + j
         if action > 0:
             action = action % 8
@@ -178,13 +184,13 @@ def calcolateDistances(g, obstacles):
 
         gir_prov.pos = g.pos
 
-        for i in range(6):
+        for i in range(6): #calcola per una distanza 6
             gir_prov.update_pos(action)
             if checkCollision(gir_prov, obstacles):
-                distances[j + 2] = i + 1
+                distances[j + offset] = i + 1
                 break
         if i == 5:
-            distances[j + 2] = 6
+            distances[j + offset] = 6
         j += 1
     
     return distances
