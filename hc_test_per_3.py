@@ -18,11 +18,13 @@ def measure(TRIG, ECHO):
 GPIO.setmode(GPIO.BOARD)
 
 TRIG1 = 7
-TRIG2 = 8
-TRIG3 = 9
 ECHO1 = 11
-ECHO2 = 12
-ECHO3 = 13
+
+TRIG2 = 13
+ECHO2 = 15
+
+TRIG3 = 19
+ECHO3 = 21
 
 print("Distance measurement in progress")
 
@@ -46,7 +48,7 @@ while(True):
     distance2 = measure(TRIG2, ECHO2)
     distance3 = measure(TRIG3, ECHO3)
     print("[Distance] 1--> " +  str(distance1) + "cm\t2--> " + str(distance2) + "cm\t3--> "+ str(distance3) + "cm") 
-    sleep(1)
+    time.sleep(1)
 
 GPIO.cleanup()
 

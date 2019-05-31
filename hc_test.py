@@ -1,36 +1,37 @@
+#!/usr/bin/python
 import RPi.GPIO as GPIO
 import time
+while 1:
+	try:
+		GPIO.setmode(GPIO.BOARD)
 
-GPIO.setmode(GPIO.BOARD)
+		PIN_TRIGGER = 19
+		PIN_ECHO = 21
 
-TRIG = 7
-ECHO = 11
+		GPIO.setup(PIN_TRIGGER, GPIO.OUT)
+		GPIO.setup(PIN_ECHO, GPIO.IN)
 
-print("Distance measurement in progress")
+		GPIO.output(PIN_TRIGGER, GPIO.LOW)
 
-GPIO.setup(TRIG, GPIO.OUT)
-GPIO.setup(ECHO, GPIO.IN)
+		print ("Waiting for sensor to settle")
 
-GPIO.output(TRIG, GPIO.LOW)
-print("Waiting for sensor to settle")
-time.sleep(2)
+		time.sleep(2)
 
-GPIO.output(TRIG, GPIO.HIGH)
-time.sleep(0.00001)
-GPIO.output(TRIG, GPIO.LOW)
+		print ("Calculating distance")
 
-while GPIO.input(ECHO) == 0:
-	pulse_start = time.time()
+		GPIO.output(PIN_TRIGGER, GPIO.HIGH)
 
-while GPIO.input(ECHO) == 1:
-	pulse_end = time.time()
+		time.sleep(0.00001)
 
-pulse_duration = pulse_end - pulse_start
+		GPIO.output(PIN_TRIGGER, GPIO.LOW)
 
-distance = pulse_duration * 17150
+		while GPIO.input(PIN_ECHO)==0:
+			pulse_start_time = time.time()
+		while GPIO.input(PIN_ECHO)==1:
+			pulse_end_time = time.time()
 
-distance = round(distance, 2)
-
-print("Distance: " +  str(distance) + "cm")
-
-GPIO.cleanup()
+		pulse_duration = pulse_end_time - pulse_start_time
+		distance = round(pulse_duration * 17150, 2)
+		print ("Distance:"+str(distance)+"cm")
+	finally:
+		GPIO.cleanup()
